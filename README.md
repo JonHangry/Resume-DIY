@@ -1,4 +1,4 @@
-# 📝 Resumaker - 简历编辑器
+# 📝　简历编辑器
 
 一个基于 React + TypeScript 构建的简历编辑器。
 
