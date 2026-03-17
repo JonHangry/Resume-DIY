@@ -58,25 +58,33 @@ const EDITOR_COLORS = [
 export const RichTextEditor = forwardRef<ReactQuill, RichTextEditorProps>(
   ({ value, onChange, placeholder, className, minHeight = '200px' }, ref) => {
     // 配置工具栏
-    const modules = useMemo(
-      () => ({
-        toolbar: [
-          [{ header: [1, 2, 3, false] }], // 标题
-          [{ size: ['small', false, 'large', 'huge'] }], // 字体大小
-          ['bold', 'italic', 'underline', 'strike'], // 文字样式
-          [
-            { color: EDITOR_COLORS }, // 字体颜色
-            { background: EDITOR_COLORS }, // 背景色
-          ],
-          [{ list: 'ordered' }, { list: 'bullet' }], // 列表
-          [{ indent: '-1' }, { indent: '+1' }], // 缩进
-          ['link'],
-          ['clean'], // 清除格式
-        ],
-      }),
-      []
-    );
-
+const modules = useMemo(() => ({
+  toolbar: {
+    container: [
+      [{ header: [1, 2, 3, false] }],
+      [{ size: ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      ['space'],
+      [
+        { color: EDITOR_COLORS },
+        { background: EDITOR_COLORS },
+      ],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
+      ['link'],
+      ['clean'],
+    ],
+    handlers: {
+      space: function () {
+        const range = this.quill.getSelection();
+        if (range) {
+          this.quill.insertText(range.index, '\u00A0');
+          this.quill.setSelection(range.index + 1);
+        }
+      }
+    }
+  }
+}), []);
     // 配置格式
     const formats = [
       'header',
@@ -227,6 +235,10 @@ export const RichTextEditor = forwardRef<ReactQuill, RichTextEditorProps>(
           .rich-text-editor-wrapper .rich-text-editor .ql-color-picker .ql-picker-item:hover {
             border-color: #3b82f6;
             transform: scale(1.1);
+          }
+          .ql-space::before {
+            content: "␣";
+            font-size: 14px;
           }
         `}</style>
       </div>
